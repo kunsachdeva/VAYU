@@ -1,0 +1,5 @@
+**/uploads/
+**/build/
+*.swp
+**/node_modules/
+webb-app/public/lib/

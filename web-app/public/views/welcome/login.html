@@ -1,0 +1,12 @@
+﻿<div ng-controller="loginCtrl as login" class="login flex align-center justify-center flex-column">
+    
+    <span class="title">VAYU</span>
+
+    <form name="login" class="flex align-center flex-column" ng-animate="ey">
+        <div><input type="text" ng-model="email" placeholder="Email" name="email" required /></div>
+        <div><input type="password" ng-model="password" placeholder="Password" name="password" required /></div>
+        <input type="button" class="submit" value="Login" ng-click="Login()" />
+    </form>
+    <div ng-model="name"></div>
+
+</div>

@@ -1,0 +1,25 @@
+{
+  "name": "Vayu",
+  "version": "1.0.0",
+  "main": "public/styles/main.css",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "jquery": "*",
+    "bootstrap": "*",
+    "angular": "~1.4.0",
+    "angular-ui": "*",
+    "angular-resource": "*",
+    "angular-ui-router": "*",
+    "angular-animate": "*",
+    "angular-cookies": "*",
+    "angular-base64": "*",
+    "angular-upload": "~1.0.11",
+    "ngstorage": "~0.3.0"
+  },
+  "resolutions": {
+    "angular": "~1.4.0"
+  }
+}

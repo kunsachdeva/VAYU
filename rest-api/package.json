@@ -1,0 +1,45 @@
+{
+  "name": "Vcon",
+  "version": "0.0.1",
+  "description": "Vcon",
+  "main": "server.js",
+  "author": {
+    "name": "Anthony",
+    "email": ""
+  },
+  "scripts": {
+    "start": "NODE_ENV=prod node server.js",
+    "predeploy": "Deploying Vayu RESTful API...",
+    "postdeploy": "Deployed!"
+  },
+  "dependencies": {
+    "azure-storage": "^0.4.3",
+    "basic-auth": "*",
+    "bcryptjs": "*",
+    "body-parser": "^1.12.2",
+    "express": "^5.0.0-alpha.1",
+    "express-rate-limit": "^1.0.2",
+    "mongoose-auto-increment": "*",
+    "multer": "^0.1.8",
+    "node-uuid": "*",
+    "request": "^2.54.0",
+    "sendgrid": "^1.6.0",
+    "aws-sdk": "~2.1.24",
+    "cors": "~2.5.3",
+    "shortid": "~2.2.2",
+    "mongoose": "~4.0.4"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-concurrent": "~1.0.0",
+    "grunt-contrib-copy": "~0.8.0",
+    "grunt-contrib-jshint": "~0.11.2",
+    "grunt-contrib-uglify": "~0.9.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-shell": "~1.1.2",
+    "load-grunt-tasks": "~3.1.0",
+    "mocha": "^2.2.5",
+    "should": "^6.0.3",
+    "supertest": "^1.0.1"
+  }
+}

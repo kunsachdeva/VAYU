@@ -1,0 +1,56 @@
+﻿<div class="settingsb container">
+
+    <div class="row flex-column">
+        <div class="settings-box col-md-12">
+            <h2>Account Details</h2>
+            <div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">First name</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Last name</label>
+                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                    </div>
+            </div>
+        </div>
+
+        <div class="settings-box col-md-12">
+            <h2>Import Contacts</h2>
+            <div class="import-contacts flex-column flex-center-around flex-left" style="align-items: flex-start;">
+                <a id="googles" href="https://accounts.google.com/o/oauth2/auth?client_id=1093022562696-rslc0jt5gt7j3th3ec1ns2tmvp20fhgu.apps.googleusercontent.com&redirect_uri=http://vayudrive.azurewebsites.net/settings/google&scope=https://www.google.com/m8/feeds/&response_type=code">
+                    Import From Google
+                </a>
+                <a href="#">Import From Yahoo</a>
+            </div>
+        </div>
+
+        <div class="settings-box col-md-12 flex-column">
+            <h2>Security</h2>
+            <div>
+                <a id="change_password" href="settings/pass_form" data-id="<?php echo $this->user->get_user(); ?>">Change password</a>
+                <a id="forgotPass" href="settings/forgot_pass" data-id="<?php echo $this->user->get_user(); ?>">Forgot Password</a>
+
+                <div class="pin-numbers">
+                    Setup a pin<br />
+                    <input class="pin" maxlength="1" id="pin1" type="password" />
+                    <input class="pin" maxlength="1" id="pin2" type="password" />
+                    <input class="pin" maxlength="1" id="pin3" type="password" />
+                    <input class="pin" maxlength="1" id="pin4" type="password" />
+                </div>
+
+                <div class="button flex-center" id="pinset">Set Pin</div>
+            </div>
+        </div>
+
+        <div class="settings-box col-md-12 flex-column">
+            <h2>Delete</h2>
+            <a href="<?php echo base_url('settings/delete_user'); ?> ">Delete my account</a>
+        </div>
+
+    </div>
+</div>

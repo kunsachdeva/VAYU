@@ -1,0 +1,10 @@
+<div class="main-view col-lg-11 flex">
+    <div class="file" ng-repeat="file in files | filter: {name : fileFilter}">
+        <div class="icon flex justify-center align-center" >
+            <i class="fa fa-file-{{file.icon}}o"></i>
+        </div>
+        <div class="name flex justify-center">
+            {{file.name}}
+        </div>
+    </div>
+</div>
