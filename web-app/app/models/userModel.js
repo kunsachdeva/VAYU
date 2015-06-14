@@ -1,7 +1,8 @@
-﻿var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+﻿var mongoose = require('mongoose'),
+    schema = mongoose.Schema;
 
-var schema = new Schema( {
+//User schema
+var  userSchema = new schema({
 
     name: {
         first: String,
@@ -12,14 +13,35 @@ var schema = new Schema( {
     country: String,
     phone: Number,
     storageUsed: Number,
-    ApiKey: String,
+    apiKey: String,
     resetCode: String,
     level: String,
     sessID: String,
-    folders: [{type: Schema.Types.ObjectId, ref: 'Folder'}]
+    folders: [{type: schema.Types.ObjectId, ref: 'Folder'}],
+    home: {type: schema.Types.ObjectId, ref: 'Folder'}
 
 }, { collection : 'User' });
 
 var collectionName = 'User';
 
-module.exports = mongoose.model('User', schema, collectionName);
+//Static methods
+
+userSchema.statics.emailIsUnique = function(email, callback){
+
+    this.find({email: email}, function(err, result){
+        if(err){
+            console.log(err);
+        } else {
+            
+            if(result)
+                callback(false);
+
+            else
+                callback(true);
+        }
+    });
+};
+        
+module.exports = mongoose.model('User', userSchema, collectionName);
+
+

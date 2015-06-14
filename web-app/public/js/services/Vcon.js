@@ -1,47 +1,35 @@
 app.service('Vcon', ['$http', '$state', function ($http, $state) {
         //var port = window.location.port;
         //var base = "http://vcon-test.herokuapp.com";
-        var base = 'http://localhost:1337';
-        var user = {};
-        user.name = {};
+        var base = 'http://localhost:1337/api',
+            base2 = 'http://localhost:1337',
+            user = {},
+            cwd = "";
 
-        //$scope.$storage = $sessionStoragenpm
-
-        this.checkUser = function(callback){
+        //Check user ID is stored in Node.js backend
+        this.isLoggedIn = function(callback){
 
             $http.get('/session').success(function (data){
-                console.log(data);
                 user.id = data._id;
                 user.name = data.name;
                 user.email = data.email;
-                user.key = data.ApiKey;
-
-
-                if(callback)
-                    return callback(true);
-
+                user.key = data.apiKey;
+                user.home = data.home;
+                cwd = data.home;
+                
+                return callback(data);
             }).error(function (data) {
 
-                console.log(data);
-                user = {};
-
-                if($state.current === "home")
-                    $state.go('welcome');
-
-                if(callback)
-                    return callback(false);
-
+                return callback(false);
+                
             });
         };
-
         
-        var loggedIn = false;
-
         //retrieve user storage
-        this.getStorage = function (callback){
+        this.listFiles = function (callback){
 
             var files = [];
-            $http.get(base + '/files/' + user.id,{
+            $http.get(base + '/files/' + cwd,{
                 headers: {
                     'Authorization' : 'Basic ' + btoa(user.id + ':' + user.key)
                 }
@@ -66,7 +54,7 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
         this.Login = function (data, callback) {
             
 
-            $http.get(base + '/users', {
+            $http.get(base2 + '/users', {
                 headers : {
                     'Authorization' : 'Basic ' + btoa(data.email + ':' + data.password)
                 }
@@ -75,7 +63,7 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
                 user.id = data._id;
                 user.name = data.name;
                 user.email = data.email;
-                user.key = data.ApiKey;
+                user.key = data.apiKey;
                                 
                 //return true to client
                 return callback(true);
@@ -87,25 +75,6 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
 
         };
         
-        this.isLoggedIn = function (){
-            
-            $http.get('/reqSession').success(function (data) {
-                    //send user session if logged in
-                data = data.data;
-
-                user.id = data._id;
-                user.name.first = data.name.first;
-                user.name.last = data.name.last;
-                user.email = data.email;
-                user.key = data.APIKey;
-                         
-            }).error(function (data) {
-                    //redirect to home if not logged in
-                $state.go('welcome');
-                user = false;
-            });
-            return user;          
-        };
         
         this.returnUser = function () {
             return user;
@@ -115,9 +84,9 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
             //$http.
         };
         
-        this.uploadFile = function (data, callback)
+        this.uploadFile = function (data, cwd, callback)
         {
-            console.log('data sent: ', data);
+            console.log('data sent: ', data, cwd);
 
             /*$http.post('/files/' + user.id, data, {
                 headers: { 
@@ -136,7 +105,7 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
             });*/
 
             $.ajax({
-                url: 'http://localhost:1337/files/' + user.id,
+                url: base + '/files/' + cwd,
                 data: data,
                 headers: {
                     'Authorization' : 'Basic ' + btoa(user.id + ':' + user.key)
@@ -156,7 +125,7 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
         };
         
         this.Register = function (data) {
-            $http.post(base + '/users', data).success(function (data) {
+            $http.post(base2 + '/users', data).success(function (data) {
                 
                 console.log(data);
                 
@@ -169,10 +138,10 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
             });
         };
 
-        this.newFolder = function (cwd) {
-            $http.post(base + 'folder', data)
+        this.newFolder = function (parent, callback) {
+            $http.post(base + 'folder/' + parent, data)
             .success(function(data) {
-
+                
             });
         };
 }]);

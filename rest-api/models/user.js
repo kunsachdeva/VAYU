@@ -12,9 +12,9 @@ var schema = new Schema( {
     country: String,
     phone: Number,
     storageUsed: Number,
-    ApiKey: String,
+    apiKey: String,
     resetCode: String,
-    level: String,
+    admin: Boolean,
     sessID: String,
     folders: [{type: Schema.Types.ObjectId, ref: 'Folder'}]
 

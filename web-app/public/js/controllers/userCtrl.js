@@ -1,37 +1,36 @@
 ﻿app.controller('userCtrl', ['$scope', 'Vcon', '$state', '$http', function ($scope, Vcon, $state, $http) { 
         
-        /*Vcon.checkUser(function (success){
+        $scope.user = Vcon.returnUser();
+        $scope.cwd = $scope.user.home;
+    
+        Vcon.isLoggedIn(function (success){
             if(success)
             {
-                Vcon.listFiles(function (files){
-                    $scope.files = files;
-                    
-                console.log($scope.files);
-                });
                 $scope.user = Vcon.returnUser();
+                Vcon.listFiles($scope.cwd, function (files){
+                    $scope.files = files;
+                    console.log($scope.files);
+                });
             }else{
                 console.log(success);
             }
-        });*/
+        });
 
-        var options = false;
-       
-        $scope.user = Vcon.returnUser();
+        //var options = false;
 
-        //current working directory
-        $scope.cwd = '';
-
+        //Set working directory to home folder
         console.log($scope.user);
 
-        Vcon.getStorage(function (data){
+       /* Vcon.getStorage($scope.user.home, function (data){
             $scope.user.storage = data;
-            console.log($scope.user.storage);
-        });
+            console.log($scope.user.storage, 'ey');
+        });*/
 
         $scope.listStorage = function()
         {
             Vcon.getStorage(function (data){
                 $scope.user.storage = data;
+                console.log(data);
             });
 
         };
@@ -61,7 +60,7 @@
                 fd.append('file-'+i, file);
             });
 
-            Vcon.uploadFile(fd, function (success) {
+            Vcon.uploadFile(fd, $scope.cwd, function (success) {
                 
             });
         };
@@ -82,7 +81,7 @@
                 fd.append('file-'+i, file);
             });
 
-            Vcon.uploadFile(fd, function(success) {
+            Vcon.uploadFile(fd, $scope.cwd, function(success) {
                 console.log(success);
             });
         }; 
