@@ -17,11 +17,9 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
                 user.home = data.home;
                 cwd = data.home;
                 
-                return callback(data);
+                return callback(true);
             }).error(function (data) {
-
                 return callback(false);
-                
             });
         };
         
@@ -35,7 +33,7 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
                 }
             }).success(function (data){
                 callback(data);
-            });        
+            });    
 
         };
 
@@ -52,7 +50,6 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
 
 
         this.Login = function (data, callback) {
-            
 
             $http.get(base2 + '/users', {
                 headers : {
@@ -144,4 +141,5 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
                 
             });
         };
+
 }]);

@@ -93,17 +93,26 @@ exports.listFiles = function(req, res){
     {
         return res.status(400).end();
     }
-
-    folderModel.find({_id: folderId, user: userId})
+    
+    //Find specified folder
+    folderModel.findOne({_id: folderId, user: userId})
+        //Find files in folder
         .populate('files')
         .exec(function(err, files){
             if(err)
                 return res.status(500).json({mongoError: err});
 
-            if(files)
-                res.status(200).json(files);
-            else
+            if(files){
+                var data = {
+                    files: files.files,
+                    folders: files.folders,
+                    name: name
+                };
+                res.status(200).json(data);
+                console.log(files);
+            }else{
                 res.status(400).json({"message": "Folder not found"});
+            }
         });
 };
 //End of list files
@@ -118,6 +127,7 @@ exports.newFolder = function(req, res){
         userId = req.body.userId;
         folderId = req.params.folderId;
         name = req.body.name;
+        console.log(name);
     }
     catch(err)
     {
@@ -137,12 +147,13 @@ exports.newFolder = function(req, res){
 
         if(err)
             return res.status(500).json({mongoError: message});
-        //Add folder id to user document
-        userModel.update({_id: userId}, {$push: {folders: result._id}})
-            .exec(function(err){
+    
+        //Add folder id to parent folder
+        folderModel.update({_id: folderId}, {$push: {folders: result._id}}).exec(function(err){
 
                 if(err)
                     return res.status(500).json({mongoError: err});
+                res.status(200).end();
             });
     });
 

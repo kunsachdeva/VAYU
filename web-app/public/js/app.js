@@ -47,14 +47,5 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
 
     }]);
 
-app.run(['Vcon', function (Vcon){
-    
-    Vcon.isLoggedIn(function(user){
-        
-        if(!user){
-           //ey 
-        }
-
-    });
-
-}]);
+/*app.run(['Vcon', '$state', function (Vcon, $state){
+}]);*/

@@ -18,7 +18,6 @@ var  userSchema = new schema({
     resetCode: String,
     level: String,
     sessID: String,
-    folders: [{type: schema.Types.ObjectId, ref: 'Folder'}],
     home: {type: schema.Types.ObjectId, ref: 'Folder'}
 
 }, { collection : 'User' });

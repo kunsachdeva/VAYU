@@ -1,16 +1,18 @@
 ﻿app.controller('userCtrl', ['$scope', 'Vcon', '$state', '$http', function ($scope, Vcon, $state, $http) { 
         
-        $scope.user = Vcon.returnUser();
-        $scope.cwd = $scope.user.home;
+        //$scope.user = Vcon.returnUser();
+        //$scope.cwd = $scope.user.home;
     
         Vcon.isLoggedIn(function (success){
             if(success)
             {
                 $scope.user = Vcon.returnUser();
-                Vcon.listFiles($scope.cwd, function (files){
+                $scope.cwd = $scope.user.home;
+
+                Vcon.listFiles(function (files){
                     $scope.files = files;
-                    console.log($scope.files);
                 });
+            
             }else{
                 console.log(success);
             }
