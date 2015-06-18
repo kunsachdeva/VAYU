@@ -50,8 +50,10 @@ api.route('/users/:userId')
 api.route('/share/:fileId/:userId')
     .post(fileCtrl.shareFile);
 
+//File edits
 api.route('/file/:fileId')
-    .put(fileCtrl.renameFile);
+    .put(fileCtrl.renameFile)
+    .delete(fileCtrl.deleteFile);
 
 
 api.route('/files/:folderId')

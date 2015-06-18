@@ -223,4 +223,22 @@ exports.renameFile = function(req, res) {
 //Delete file
 exports.deleteFile = function(req, res) {
 
+    var fileId;
+
+    try{
+        fileId = req.params.fileId;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    fileModel.findById(fileId).remove(function(err, result){
+        
+        if(err)
+            return res.status(500).json({mongoError: err});
+
+        res.status(200).end();
+    });
+
 };
