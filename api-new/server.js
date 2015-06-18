@@ -33,7 +33,7 @@ app.use(cors({
     origin: '*',
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(limiter);
+//app.use(limiter);
 
 app.use('/api', db.findUser, api);
 //Doesn't require auth
@@ -47,8 +47,11 @@ api.route('/users/:userId')
     //Edit user
     //.put(userCtrl.updateProfile);
     ;
+api.route('/share/:fileId/:userId')
+    .post(fileCtrl.shareFile);
 
-
+api.route('/file/:fileId')
+    .put(fileCtrl.renameFile);
 
 
 api.route('/files/:folderId')

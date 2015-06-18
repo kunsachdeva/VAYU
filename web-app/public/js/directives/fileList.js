@@ -9,6 +9,7 @@ app.directive('fileList', function () {
         replace: 'true',
         templateUrl: '/templates/fileList.html',
         controller: ['$scope', 'Vcon', function($scope, Vcon){
+            console.log($scope.files, $scope.storage);
             $scope.files = $scope.storage.files;
             $scope.folders = $scope.storage.folders; 
         }],

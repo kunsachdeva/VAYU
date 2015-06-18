@@ -18,6 +18,7 @@ var  userSchema = new schema({
     resetCode: String,
     level: String,
     sessID: String,
+    sharedFiles:[{type: schema.Types.ObjectId, ref: 'File'}],
     home: {type: schema.Types.ObjectId, ref: 'Folder'}
 
 }, { collection : 'User' });

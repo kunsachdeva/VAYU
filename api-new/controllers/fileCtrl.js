@@ -14,6 +14,7 @@ exports.uploadFile = function (req, res){
     var files = [],
         userId = req.body.userId,
         folderId = req.params.folderId;
+        console.log(folderId);
     for(var key in req.files) {
         if(req.files.hasOwnProperty(key)){
             
@@ -54,13 +55,15 @@ exports.uploadFile = function (req, res){
                     return res.status(500).json({mongoError: err});
                 
                 //Add file ID to folder
-                folderModel.update(folderId, {$push:{files:newFile._id}}, function(err){
+                folderModel.findByIdAndUpdate(folderId, {$push:{files:newFile._id}}, function(err){
                     if(err)
                         return res.status(500).json({mongoError: err});
-                    if(newFile)
-                       res.status(200).end();
-                    else
+                    if(newFile){
+                        res.status(200).end();
+                    }
+                    else{
                        res.status(500).end(); 
+                    }
                     //Upload file to S3
                     /*s3.upload({
                         Bucket: userId,
@@ -98,6 +101,7 @@ exports.listFiles = function(req, res){
     folderModel.findOne({_id: folderId, user: userId})
         //Find files in folder
         .populate('files')
+        .populate('folders')
         .exec(function(err, files){
             if(err)
                 return res.status(500).json({mongoError: err});
@@ -105,11 +109,9 @@ exports.listFiles = function(req, res){
             if(files){
                 var data = {
                     files: files.files,
-                    folders: files.folders,
-                    name: name
+                    folders: files.folders
                 };
                 res.status(200).json(data);
-                console.log(files);
             }else{
                 res.status(400).json({"message": "Folder not found"});
             }
@@ -149,14 +151,76 @@ exports.newFolder = function(req, res){
             return res.status(500).json({mongoError: message});
     
         //Add folder id to parent folder
-        folderModel.update({_id: folderId}, {$push: {folders: result._id}}).exec(function(err){
+        folderModel.update({_id: folderId}, {$push: {folders: result._id}}).exec(function(err, r){
 
                 if(err)
                     return res.status(500).json({mongoError: err});
                 res.status(200).end();
+                console.log(folderId, result._id);
             });
     });
 
 
 };
 //End of new folder
+
+//Share file
+exports.shareFile = function(req, res)
+{
+    var fileId, userId;
+
+    try{
+        userId = req.params.userId;
+        fileId = req.params.fileId;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    //Update file 'sharedWith' field
+    fileModel.findByIdAndUpdate(fileId, {$push: {sharedWith: userId}}).exec(function(err, result){
+
+            if(err)
+                return res.status(500).json({mongoError: err});
+            
+            //Also add to specified user
+            userModel.findByIdAndUpdate(userId, {$push: {sharedFiles: fileId}}).exec(function(err, result){
+                
+                if(err)
+                    return res.status(500).json({mongoError: err});
+                
+                res.status(200).end();
+                console.log('shared file', userId, fileId);
+                console.log(result);
+            });
+    });
+};
+
+//Rename file
+exports.renameFile = function(req, res) {
+
+    var fileId, name;
+
+    try{
+        fileId = req.params.fileId;
+        name = req.body.name;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    fileModel.findByIdAndUpdate(fileId, {$set: {name: name}}).exec(function(err, result){
+    
+        if(err)
+            return res.status(500).json({mongoError: err});
+
+        res.status(200).end();
+    });
+};
+
+//Delete file
+exports.deleteFile = function(req, res) {
+
+};

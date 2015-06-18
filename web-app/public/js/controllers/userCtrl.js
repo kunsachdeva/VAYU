@@ -3,6 +3,11 @@
         //$scope.user = Vcon.returnUser();
         //$scope.cwd = $scope.user.home;
     
+        $scope.storage = {
+            files: {},
+            folders: {}
+        };
+
         Vcon.isLoggedIn(function (success){
             if(success)
             {
@@ -10,18 +15,13 @@
                 $scope.cwd = $scope.user.home;
 
                 Vcon.listFiles(function (files){
-                    $scope.files = files;
+                    $scope.user.storage = files;
                 });
             
             }else{
                 console.log(success);
             }
         });
-
-        //var options = false;
-
-        //Set working directory to home folder
-        console.log($scope.user);
 
        /* Vcon.getStorage($scope.user.home, function (data){
             $scope.user.storage = data;

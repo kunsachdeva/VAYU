@@ -16,7 +16,8 @@ var schema = new Schema({
     folder: {
         type: Schema.Types.ObjectId,
         ref: 'Folder'
-    }
+    },
+    sharedWith: [{type: Schema.Types.ObjectId, ref: 'User'}]
 
 }, { collection : 'File' });
 
