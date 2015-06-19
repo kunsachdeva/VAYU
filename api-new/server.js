@@ -50,8 +50,13 @@ api.route('/users')
     //Edit user
     .put(userCtrl.updateProfile);
     
+//Share file with specified user
 api.route('/share/:fileId/:userId')
     .post(fileCtrl.shareFile);
+
+//List files shared with user
+api.route('/share')
+    .get(fileCtrl.listSharedFiles);
 
 //File edits
 api.route('/file/:fileId')

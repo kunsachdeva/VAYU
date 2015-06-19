@@ -293,3 +293,26 @@ exports.deleteFile = function(req, res) {
     });
 
 };
+
+//List shared files
+exports.listSharedFiles = function(req, res) {
+
+    var userId;
+
+    try{
+        userId = req.body.userId;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    userModel.findById(userId).populate('sharedFiles').exec(function(err, result){
+    
+        if(err)
+            return res.status(500).json({mongoError: err});
+
+        res.status(200).json(result.sharedFiles);
+    });
+
+};
