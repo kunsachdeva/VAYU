@@ -84,7 +84,7 @@ api.route('/folder/:folderId')
     .post(fileCtrl.newFolder)
 
     //Delete folder
-    //.delete(fileCtrl.deleteFolder)
+    .delete(fileCtrl.deleteFolder)
 
     //Rename Folder
     .put(fileCtrl.renameFolder);

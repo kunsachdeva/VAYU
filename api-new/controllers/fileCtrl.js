@@ -191,7 +191,29 @@ exports.renameFolder = function(req, res){
 
 };
 
-//TODO delete folder
+//Delete folder
+exports.deleteFolder = function(req, res){
+
+    var userId, folderId;
+
+    try{
+        userId = req.body.userId;
+        folderId = req.params.folderId;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    folderModel.findById(folderId).remove(function(err){
+
+        if(err)
+            return res.statsu(500).json({mongoError: err});
+
+        res.status(200).end();
+    });
+
+};
 
 //Share file
 exports.shareFile = function(req, res)
