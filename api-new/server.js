@@ -36,14 +36,17 @@ app.use(cors({
 //app.use(limiter);
 
 app.use('/api', db.findUser, api);
+
 //Doesn't require auth
 app.post('/users', userCtrl.register);
+
 //Login
 app.get('/users', userCtrl.login);
 
-api.route('/users/:userId')
+//User edits
+api.route('/users')
     //Delete user
-    //.delete(userCtrl.deleteUser)
+    .delete(userCtrl.deleteUser)
     //Edit user
     .put(userCtrl.updateProfile);
     
@@ -52,13 +55,19 @@ api.route('/share/:fileId/:userId')
 
 //File edits
 api.route('/file/:fileId')
+
+    //Rename file
     .put(fileCtrl.renameFile)
+
+    //Delete file
     .delete(fileCtrl.deleteFile);
 
 
 api.route('/files/:folderId')
+
     //List files
     .get(fileCtrl.listFiles)
+    
     //Upload file
     .post(multer({
         dest: __dirname + '/uploads',

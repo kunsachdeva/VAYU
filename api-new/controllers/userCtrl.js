@@ -147,3 +147,17 @@ exports.updateProfile = function(req, res){
     });
 
 };
+
+//Delete profile
+
+exports.deleteUser = function(req, res){
+
+    var userId = req.body.userId;
+
+    userModel.findById(userId).remove(function(err){
+        if(err)
+            return res.status(500).json({mongoError: err});
+        
+        res.status(200).end();
+    });
+};
