@@ -81,13 +81,14 @@ api.route('/files/:folderId')
  
 api.route('/folder/:folderId')
     //Create folder
-    .post(fileCtrl.newFolder);
-/*
+    .post(fileCtrl.newFolder)
+
     //Delete folder
-    .delete(fileCtrl.deleteFolder)
+    //.delete(fileCtrl.deleteFolder)
+
     //Rename Folder
     .put(fileCtrl.renameFolder);
-*/
+
 app.get('/', function(req, res) {
     res.status(401).end();
 });

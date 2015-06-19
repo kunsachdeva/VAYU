@@ -164,6 +164,35 @@ exports.newFolder = function(req, res){
 };
 //End of new folder
 
+//Rename folder
+exports.renameFolder = function(req, res){
+
+    var userId, folderId, name;
+    
+    try{
+        userId = req.body.userId;
+        folderId = req.params.folderId;
+        name = req.body.name;
+        console.log(name);
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    //Find and rename folder
+    folderModel.findByIdAndUpdate(folderId, {$set: {name: name}}).exec(function(err){
+    
+        if(err)
+            return res.status(500).json({mongoError: err});
+        
+        res.status(200).end(); 
+    });
+
+};
+
+//TODO delete folder
+
 //Share file
 exports.shareFile = function(req, res)
 {
