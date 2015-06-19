@@ -125,20 +125,21 @@ exports.login = function(req, res){
 exports.updateProfile = function(req, res){
 
         var userId,
-            profile = {};
+            profile = {},
+            newProfile;
     try
     {
         profile.name = {first: req.body.name.first, last: req.body.name.last};
         profile.phone = req.body.phone;
         profile.coutry = req.body.country;
-
+        userId = req.body.userId;
     }
     catch(err)
     {
-        return res.status(400).end();
+        return res.status(400).end(err.toString());
     }
 
-    userModel.findByIdAndUpdate(userId, {$push:profile}, function(err, user){
+    userModel.findByIdAndUpdate(userId, {$set:profile}, function(err, user){
         if(err)
             return res.status(500).json({mongoError: err});
         
