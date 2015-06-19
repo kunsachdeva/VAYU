@@ -45,8 +45,8 @@ api.route('/users/:userId')
     //Delete user
     //.delete(userCtrl.deleteUser)
     //Edit user
-    //.put(userCtrl.updateProfile);
-    ;
+    .put(userCtrl.updateProfile);
+    
 api.route('/share/:fileId/:userId')
     .post(fileCtrl.shareFile);
 

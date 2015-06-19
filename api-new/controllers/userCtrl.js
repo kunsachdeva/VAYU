@@ -120,3 +120,30 @@ exports.login = function(req, res){
     });
 };
 
+//Update profile
+
+exports.updateProfile = function(req, res){
+
+        var userId,
+            profile = {};
+    try
+    {
+        profile.name = {first: req.body.name.first, last: req.body.name.last};
+        profile.phone = req.body.phone;
+        profile.coutry = req.body.country;
+
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    userModel.findByIdAndUpdate(userId, {$push:profile}, function(err, user){
+        if(err)
+            return res.status(500).json({mongoError: err});
+        
+        //If updated
+        res.status(200).json(user);
+    });
+
+};
