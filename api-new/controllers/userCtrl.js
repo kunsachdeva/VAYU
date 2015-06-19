@@ -90,6 +90,56 @@ exports.register = function(req, res){
     });
 };
 
+//TODO: Activation
+/*
+exports.activation = function(req, res) {
+
+    var userId, code;
+
+    try
+    {
+        userId
+    
+
+};
+*/
+
+//Forgot password
+exports.forgotPassword = function(req, res){
+
+    var email;
+
+    try
+    {
+        email = req.body.email;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    userModel.findOne({email: email}, function(err, user) {
+        if(err)
+            return res.status(500).json({mongoError: err});
+
+        if(user){
+           var code = crypto.randomBytes(15);
+
+           userModel.findByIdAndUpdate(user._id, {$set: {resetCode: code}}, function(err){
+               if(err)
+                   return res.status(500).json({mongoError: err});
+
+               res.status(200).end();
+           });
+        }
+        else
+        {
+            return res.status(404).end();
+        }
+    });
+};
+
+//Login
 exports.login = function(req, res){
 
     var cred = auth(req);
