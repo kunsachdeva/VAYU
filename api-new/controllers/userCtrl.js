@@ -139,6 +139,23 @@ exports.forgotPassword = function(req, res){
     });
 };
 
+//Reset pass
+exports.resetPassword = function(req, res){
+
+    var code, userId;
+
+    userModel.update({_id: userId, resetCode: code}, function(err, user){ 
+        if(err)
+            return res.status(500).json({mongoError: err});
+
+        if(user)
+            return res.status(200).end();
+        else
+            return res.status(400).end();
+
+        
+    });
+};
 //Login
 exports.login = function(req, res){
 
