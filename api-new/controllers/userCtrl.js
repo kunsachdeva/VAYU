@@ -9,8 +9,11 @@ var userModel = require('../models/userModel.js'),
     aws = require('aws-sdk'),
     s3 = new aws.S3(),
     shortId = require('shortid'),
-    sendgrid = require('sendgrid'),
-    auth = require('basic-auth');
+    sendGrid = require('sendgrid')(process.env.SENDGRID_USER, process.env.SENDGRID_KEY),
+    auth = require('basic-auth'),
+    templates = {
+        activation: 'https://api.sendgrid.com/v3/templates/499b44cf-b34b-4f36-a734-26f2e803ee9e' 
+    };
 
 
 exports.register = function(req, res){
@@ -45,6 +48,8 @@ exports.register = function(req, res){
         user.storageUsed = 0;
         user.password = pass;
         user.apiKey = uuid.v4();
+        user.activated = false;
+        user.aCode = crypto.randomBytes(15);
         
         //Save user to db
         user.save(function(err, newUser) {
@@ -62,13 +67,61 @@ exports.register = function(req, res){
                 if(err)
                     return res.status(500).json({mongoError: err});
                 
-                //Home folder ref ID into user document
+                //Add home folder to user document
                 userModel.update({_id: newUser._id},{$push:{home: homeFolder._id}}, function(err){
+                    //User created, now send activation
                     if(err)
                         return res.status(500).json({mongoError: err});
                     
+                    
+                    //Options for sendgrid template retrieval
+                    var options = {
+                        url: templates.activation,
+                        headers: {
+                            'Authorization': 'Basic ' + new Buffer(process.env.SENDGRID_USER + ':' + process.env.SENDGRID_KEY).toString('base64') 
+                        } 
+
+                    };
+                    
+                    //Request activation email template
+                    request.get(options, function(error, response, body){
+                        //Parse template response
+                        var template = JSON.parse(body);
+                        
+                        //Prepare email + add template
+                        var email = new sendGrid.Email({
+                            to: 'anthony.r.shuker@gmail.com',//newUser.email,
+                            from: 'noreply@vayu.com',
+                            subject: 'Activation',
+                            html: template.versions[0].html_content,
+                            text: template.versions[0].plain_content
+                        });
+
+                        //Add substitutions
+                        email.addSubstitution('%userId%', newUser._id);
+                        email.addSubstitution('%code%', newUser.aCode.toString("base64"));
+                        email.addSubstitution('%name%', newUser.name.first);
+                        email.addSubstitution('<%subject%>', 'Vayu activation');
+                        //Hide body sub tag
+                        email.addSubstitution('<%body%>', '');
+                        
+                        sendGrid.send(email, function(err, json){
+
+                            if(err){
+                                console.log(err);
+                                return res.status(500).json({message: "Sendgrid error"});
+                            }
+
+                            console.log(json, "sent");
+                            res.status(200).end();
+
+
+                        });
+                
+                    });
+
                     //Create S3 bucket
-                    s3.createBucket({
+                   /* s3.createBucket({
                         Bucket: newUser._id.toString()
                     }, function(err) {
                         if(err)
@@ -83,26 +136,40 @@ exports.register = function(req, res){
                             .exec(function(err, user){
                                 res.status(200).json(user);
                             });
-                    });
+                    });*/
                 });
             });
         });
     });
 };
 
-//TODO: Activation
-/*
+//Activation
 exports.activation = function(req, res) {
 
     var userId, code;
 
     try
     {
-        userId
-    
+        userId = req.params.userId;
+        code = req.params.code;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+
+    userModel.update({_id: userId, aCode: code}, {$set: {activated: true}}, function(err, result){
+
+        if(err)
+            return res.status(500).json({mongoError: err});
+
+        if(!result)
+            return res.status(400).end();
+        
+        res.status(200).end();
+    });
 
 };
-*/
 
 //Forgot password
 exports.forgotPassword = function(req, res){
@@ -216,6 +283,17 @@ exports.updateProfile = function(req, res){
 
 };
 
+//TODO Change email
+/*exports.changeEmail = function(req, res){
+    
+};
+*/
+
+//TODO Change password
+/*exports.changePassword = function(req, res){
+
+};
+*/
 //Delete profile
 
 exports.deleteUser = function(req, res){

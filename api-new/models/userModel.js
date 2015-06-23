@@ -17,6 +17,8 @@ var  userSchema = new schema({
     apiKey: String,
     resetCode: String,
     level: String,
+    activated: Boolean,
+    aCode: String,
     sessID: String,
     sharedFiles:[{type: schema.Types.ObjectId, ref: 'File'}],
     home: {type: schema.Types.ObjectId, ref: 'Folder'}

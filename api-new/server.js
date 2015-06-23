@@ -40,6 +40,8 @@ app.use('/api', db.findUser, api);
 //Doesn't require auth
 app.post('/users', userCtrl.register);
 
+app.post('/activation/:userId/:code', userCtrl.activate);
+
 //Login
 app.get('/users', userCtrl.login);
 
