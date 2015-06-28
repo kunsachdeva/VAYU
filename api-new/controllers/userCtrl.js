@@ -8,6 +8,7 @@ var userModel = require('../models/userModel.js'),
     uuid = require('node-uuid'),
     aws = require('aws-sdk'),
     s3 = new aws.S3(),
+    urlBase64 = require('urlsafe-base64'),
     shortId = require('shortid'),
     sendGrid = require('sendgrid')(process.env.SENDGRID_USER, process.env.SENDGRID_KEY),
     auth = require('basic-auth'),
@@ -49,7 +50,8 @@ exports.register = function(req, res){
         user.password = pass;
         user.apiKey = uuid.v4();
         user.activated = false;
-        user.aCode = crypto.randomBytes(15);
+        //create activation code
+        user.aCode = urlBase64.encode(crypto.randomBytes(15));
         
         //Save user to db
         user.save(function(err, newUser) {
@@ -99,29 +101,26 @@ exports.register = function(req, res){
 
                         //Add substitutions
                         email.addSubstitution('%userId%', newUser._id);
-                        email.addSubstitution('%code%', newUser.aCode.toString("base64"));
+                        email.addSubstitution('%code%', newUser.aCode);
                         email.addSubstitution('%name%', newUser.name.first);
                         email.addSubstitution('<%subject%>', 'Vayu activation');
                         //Hide body sub tag
                         email.addSubstitution('<%body%>', '');
                         
-                        sendGrid.send(email, function(err, json){
+                        //sendGrid.send(email, function(err, json){
 
                             if(err){
                                 console.log(err);
                                 return res.status(500).json({message: "Sendgrid error"});
                             }
 
-                            console.log(json, "sent");
-                            res.status(200).end();
-
-
-                        });
+                            console.log("User registered: " + newUser._id);
+                        //});
                 
                     });
 
                     //Create S3 bucket
-                   /* s3.createBucket({
+                    s3.createBucket({
                         Bucket: newUser._id.toString()
                     }, function(err) {
                         if(err)
@@ -131,12 +130,12 @@ exports.register = function(req, res){
                         delete newUser.password;
                         
                         //retrieve user and folders
-                        userModel.find({_id: newUser._id})
+                        userModel.findById(newUser._id)
                             .populate('folders')
                             .exec(function(err, user){
                                 res.status(200).json(user);
                             });
-                    });*/
+                    });
                 });
             });
         });
@@ -174,33 +173,38 @@ exports.activation = function(req, res) {
 //Forgot password
 exports.forgotPassword = function(req, res){
 
-    var email;
+    var email, code;
 
     try
     {
         email = req.body.email;
+        code = crypto.randomBytes(15);
     }
     catch(err)
     {
         return res.status(400).end();
     }
 
-    userModel.findOne({email: email}, function(err, user) {
+    //Find specified user + add reset code to document
+    userModel.update({email: email}, {resetCode: code}, function(err, user) {
         if(err)
             return res.status(500).json({mongoError: err});
-
+        
         if(user){
-           var code = crypto.randomBytes(15);
+            
+            //Get email template
+            request.get(options, function(error, response, body){
 
-           userModel.findByIdAndUpdate(user._id, {$set: {resetCode: code}}, function(err){
-               if(err)
-                   return res.status(500).json({mongoError: err});
+                var e = new sendGrid.Email({
+                    to: 'anthony.r.shuker@gmail.com',
+                    from: 'noreply@vayu.com',
+                    subject: 'Password reset request'
 
-               res.status(200).end();
-           });
-        }
-        else
-        {
+                });
+            });
+
+        }else{
+            //No user found, 404 works
             return res.status(404).end();
         }
     });

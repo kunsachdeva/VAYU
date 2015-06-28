@@ -2,17 +2,12 @@
         
         $scope.Login = function () {
             
-            Vcon.Login({ 'email' : $scope.email, 'password' : $scope.password }, function (success) {
-                if (success) {
-                    
-                    $scope.user = Vcon.returnUser();
+            Vcon.login({ 'email' : $scope.email, 'password' : $scope.password }, function (success) {
+                if (success) 
                     $state.go('home');
-                } else {
+                else 
                     console.log("nope");
-                }
+                
             });
         };
-
-        //Vcon.checkUser();
-
 }]);

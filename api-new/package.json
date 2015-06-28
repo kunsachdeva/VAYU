@@ -13,6 +13,7 @@
     "postdeploy": "Deployed!"
   },
   "dependencies": {
+    "async": "~1.2.1",
     "aws-sdk": "~2.1.24",
     "azure-storage": "^0.4.3",
     "basic-auth": "*",
@@ -29,7 +30,7 @@
     "request": "^2.54.0",
     "sendgrid": "^1.6.0",
     "shortid": "~2.2.2",
-    "async": "~1.2.1"
+    "urlsafe-base64": "^1.0.0"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

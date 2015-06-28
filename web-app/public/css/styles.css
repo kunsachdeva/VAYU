@@ -494,3 +494,88 @@ img.profile
     padding-left: 50px;
     font-size: 16px;
 }
+
+.activation-bar
+{
+    background-color: whitesmoke;
+    color: black;
+    width: 100%;
+}
+
+.settings .title
+{
+    font-size: 36px;
+}
+
+.settings .subtitle
+{
+    font-size: 18px;
+    font-weight: 100;
+}
+
+.settings input
+{
+    border: none;
+    height: 40px;
+    width: 300px;
+    padding-left: 10px;
+    background-color: #FFF;
+}
+.modal-content
+{
+    display: inline-block;
+}
+
+.share-modal
+{
+    background-color: #151d20;
+    color: whitesmoke;
+    padding: 20px;
+}
+
+.share-modal .text
+{
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
+
+.share-modal input
+{
+    border: none;
+    height: 40px;
+    width: 300px;
+    padding-left: 10px;
+    background-color: #FFF;
+    color: black;
+}
+
+.share-modal button
+{
+    height: 40px;
+    width: 100px;
+    color: whitesmoke;
+    border: none;
+    margin-left: 10px;
+}
+
+.share-modal .share
+{
+    background-color:#e67e22;/* #1f282d;*/
+}
+
+.share-modal .cancel
+{
+    background-color: #1f282d;
+}
+
+
+.share-modal .share:hover
+{
+    background-color: #2E373C;
+}
+
+.modal-title
+{
+    font-size: 30px;
+    width: 100%;
+}

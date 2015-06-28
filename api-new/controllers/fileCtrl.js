@@ -40,7 +40,6 @@ exports.uploadFile = function (req, res){
             //Object to insert to file model
             data = {
                 name: req.files[key].originalname,
-                awsId: fileUUID,
                 type: req.files[key].mimetype,
                 extension: req.files[key].extension,
                 size: req.files[key].size,
@@ -58,23 +57,19 @@ exports.uploadFile = function (req, res){
                 folderModel.findByIdAndUpdate(folderId, {$push:{files:newFile._id}}, function(err){
                     if(err)
                         return res.status(500).json({mongoError: err});
+                    
                     if(newFile){
-                        res.status(200).end();
+                        s3.upload({
+                            Bucket: userId,
+                            Key: newFile._id.toString(),
+                            Body: fs.createReadStream(req.files[key].path)
+                        }, function (err, data){
+                            if(err)
+                                return res.status(500).json({awsError: err});
+                            else
+                                res.status(200).end();
+                        });
                     }
-                    else{
-                       res.status(500).end(); 
-                    }
-                    //Upload file to S3
-                    /*s3.upload({
-                        Bucket: userId,
-                        Key: fileUUID,
-                        Body: fs.createReadStream(req.files[key].path)
-                    }, function (err, data){
-                        if(err)
-                            return res.status(500).json({awsError: err});
-                        else
-                            res.status(200).end();
-                    });*/
                 });
             });// jshint ignore:line
         }
@@ -218,11 +213,11 @@ exports.deleteFolder = function(req, res){
 //Share file
 exports.shareFile = function(req, res)
 {
-    var fileId, userId;
+    var fileId, email;
 
     try{
-        userId = req.params.userId;
         fileId = req.params.fileId;
+        email = req.body.email;
     }
     catch(err)
     {
@@ -230,22 +225,22 @@ exports.shareFile = function(req, res)
     }
 
     //Update file 'sharedWith' field
-    fileModel.findByIdAndUpdate(fileId, {$push: {sharedWith: userId}}).exec(function(err, result){
+/*    fileModel.findByIdAndUpdate(fileId, {$push: {sharedWith: userId}}).exec(function(err, result){
 
             if(err)
                 return res.status(500).json({mongoError: err});
             
-            //Also add to specified user
-            userModel.findByIdAndUpdate(userId, {$push: {sharedFiles: fileId}}).exec(function(err, result){
+*/            //Also add to specified user
+            userModel.update({email: email}, {$push: {sharedFiles: fileId}}).exec(function(err, result){
                 
                 if(err)
                     return res.status(500).json({mongoError: err});
                 
                 res.status(200).end();
-                console.log('shared file', userId, fileId);
+                console.log('shared file', email, fileId);
                 console.log(result);
             });
-    });
+ //   });
 };
 
 //Rename file
@@ -274,10 +269,11 @@ exports.renameFile = function(req, res) {
 //Delete file
 exports.deleteFile = function(req, res) {
 
-    var fileId;
+    var fileId, userId;
 
     try{
         fileId = req.params.fileId;
+        userId = req.body.userId;
     }
     catch(err)
     {
@@ -289,7 +285,15 @@ exports.deleteFile = function(req, res) {
         if(err)
             return res.status(500).json({mongoError: err});
 
-        res.status(200).end();
+        s3.deleteObject({
+            Bucket: userId,
+            Key: fileId
+        }, function(err){
+            if(err)
+                return res.status(500).json({awsError: err});
+
+            res.status(200).end();
+        });
     });
 
 };

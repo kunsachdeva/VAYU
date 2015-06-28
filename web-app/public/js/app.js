@@ -1,4 +1,4 @@
-﻿var app = angular.module('Vayu', ['ngResource', 'ui.router', 'ngStorage']);
+﻿var app = angular.module('Vayu', ['ngResource', 'ui.router', 'ngStorage', 'ui.bootstrap']);
 
 app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
     
@@ -11,7 +11,50 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
     $stateProvider
 	    .state('home', {
             url: '/home',
-            templateUrl: '/views/home/index.html',
+            views:{
+
+                '': {
+                    templateUrl: '/views/home/index.html'
+                },
+
+                'main@home':
+                {
+                    templateUrl: '/templates/fileList.html',
+                    controller: 'fileListCtrl'
+                }
+                
+            }
+        })
+        .state('shared', {
+            url: '/shared',
+            views: {
+                
+                '': {
+                    templateUrl: '/views/home/index.html'
+                },
+                'main@shared':
+                {
+                    templateUrl: '/templates/sharedList.html',
+                    controller: 'sharedCtrl'
+                }
+
+            }
+        })
+        .state('settings',{
+            url: '/settings',
+            views:{
+                
+                '': {
+                    templateUrl: '/views/home/index.html'
+                },
+
+                //Show settings
+                'main@settings':
+                {
+                    templateUrl: '/templates/settings.html',
+                    controller: 'settingsCtrl'
+                }
+            }
         })
 	    .state('login', {
             url: '/login',
@@ -33,10 +76,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
             url: '/uploads',
             templateUrl: '/views/home/uploads.html'
         })
-        .state('settings', {
-            url: '/settings',
-            templateUrl: '/views/home/settings.html'
-        }).state('download', {
+        .state('download', {
             url: "/download/:fileID",
             controller: function ($stateParams) {
                 

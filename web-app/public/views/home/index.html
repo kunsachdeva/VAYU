@@ -1,5 +1,7 @@
 ﻿<div ng-controller="userCtrl" class="container-fluid">
-    <input id="upload" type="file" style="display:none;" onchange="angular.element(this).scope().file_change(this)" multiple>
+    <div class="row activation-bar flex align-center justify-center"  ng-show="!user.activated">
+        Please activate your account. We sent an email to {{user.email}}
+    </div>
     <div class="row header no-gutter">
     
         <div class="col-lg-1 logo flex align-center justify-center">
@@ -20,15 +22,17 @@
     <!--free-medal-->
     <div class="row main no-gutter">
         <div class="user-menu col-lg-1 col-sm-2 flex align-center flex-column">
+            <div class="option" ng-click="showFiles()">
+                My Files
+            </div>
             <div class="option" ng-click="uploadClick()">
-                    <i class="fa fa-plus"></i>
-                    Upload
+                    <i class="fa fa-plus"></i> Upload
             </div> 
 
             <div class="option" ng-click="newFolder()">
                  <i class="fa fa-folder-o"></i>New Folder
             </div> 
-           <div class="option">
+           <div class="option" ui-sref="shared">
                  <i class="fa fa-share-alt"></i>Shared files
             </div> 
             <div class="option">
@@ -39,10 +43,16 @@
                 <i class="fa fa-envelope-o"></i>
                 Messages
             </div>
+            <div class="option" ng-click"settings()">
+                <i class="fa fa-bell"></i>
+                Settings
+            </div>
          
         </div>
+        <div ui-view="main" class="main-view col-lg-11 flex">
+        </div>
 
-        <file-list storage="user.storage" file-filter="fileFilter"></file-list>
+        <file-list file-filter="fileFilter" ng-if="fState"></file-list>
     </div>
 
 <!--

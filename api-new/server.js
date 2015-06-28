@@ -38,22 +38,22 @@ app.use(cors({
 app.use('/api', db.findUser, api);
 
 //Doesn't require auth
-app.post('/users', userCtrl.register);
+app.post('/user', userCtrl.register);
 
-app.post('/activation/:userId/:code', userCtrl.activate);
+app.post('/activate/:userId/:code', userCtrl.activation);
 
 //Login
-app.get('/users', userCtrl.login);
+app.get('/user', userCtrl.login);
 
 //User edits
-api.route('/users')
+api.route('/user')
     //Delete user
     .delete(userCtrl.deleteUser)
     //Edit user
     .put(userCtrl.updateProfile);
     
 //Share file with specified user
-api.route('/share/:fileId/:userId')
+api.route('/share/:fileId')
     .post(fileCtrl.shareFile);
 
 //List files shared with user
@@ -70,7 +70,7 @@ api.route('/file/:fileId')
     .delete(fileCtrl.deleteFile);
 
 
-api.route('/files/:folderId')
+api.route('/file/:folderId')
 
     //List files
     .get(fileCtrl.listFiles)

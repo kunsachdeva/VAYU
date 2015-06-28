@@ -1,6 +1,8 @@
 ﻿app.controller('regCtrl', ['$scope', '$resource', '$state', '$http', 'Vcon', function ($scope, $resource, $state, $http, Vcon) {
-        
-        $scope.Register = function () {
+
+        $scope.regFail = false; 
+
+        $scope.register = function () {
 
             var user = {
                 name: {
@@ -11,15 +13,19 @@
                 password: $scope.password
             };
             
-            Vcon.Register(user , function (success) {
-                if (success) {
-                    
-                    
-                    
-                    
-                } else {
-                    console.log("nope");
+            Vcon.register(user, function (user) {
+                console.log(user);
+                if(user){
+                    Vcon.postSession(user._id, function(callback){
+                        if(callback)
+                            $state.go('home');
+                    });
                 }
+                else
+                {
+                    $scope.regFail = true;
+                }
+
             });
 
         };

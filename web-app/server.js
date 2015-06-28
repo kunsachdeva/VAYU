@@ -40,33 +40,41 @@ app.use(session({
 }));
 
 
+app.post('/session/:userId', function (req, res){
+    
+    try{
+        req.session.user = req.params.userId;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
+    
+    User.findById(req.session.user, function(err, user){
+        if(err)
+            return res.status(500).end();
+
+        if(user)
+            return res.status(200).json(user);
+        else
+            return res.status(404).end();
+    });
+    
+});
+
 app.route('/session')
-    .post(function (req, res){
-
-        req.session.user = req.body._id;
-        res.json({user: req.session.user.toString()});
-
-    })
     .get(function(req, res){
         console.log(req.session.user, "ey");
         if(req.session.user)
         {
             User.findOne({_id: req.session.user}, '-password', function (err, user){ 
-                console.log(user);
                 if(err)
-                {
-                    res.status(500).json({mongoError: err});
-                }
+                    return res.status(500).json({mongoError: err});
+
+                if(user)
+                    return res.status(200).json(user);
                 else
-                {
-                    if(user){
-                        res.status(200).json(user);
-                    }
-                    else
-                    {
-                        res.status(404).end();
-                    }
-                }
+                    return res.status(404).end();
 
             });
         }
@@ -75,13 +83,13 @@ app.route('/session')
             res.status(404).end();
         }
     })
-    .delete(function (req, res){
-        if(req.session.user)
-        {
-            req.session.destroy();
-            res.status(200);
-        }
-    });
+.delete(function (req, res){
+    if(req.session.user)
+    {
+        req.session.destroy();
+        res.status(200);
+    }
+});
 
 
 
@@ -185,6 +193,7 @@ app.use('/img', express.static(pubPath + '/img'));
 app.use('/css', express.static(pubPath + '/css'));
 app.use('/fonts', express.static(pubPath + '/fonts'));
 app.use('/templates', express.static(pubPath + '/templates'));
+app.use('/modals', express.static(pubPath + '/modals'));
 
 //index
 app.get('/', function (req, res) {

@@ -3,43 +3,23 @@
         //$scope.user = Vcon.returnUser();
         //$scope.cwd = $scope.user.home;
     
-        $scope.storage = {
-            files: {},
-            folders: {}
-        };
+       // Vcon.getSession(function (success){
+       //     if(success)
+       //     {
+       //         $scope.user = Vcon.returnUser();
+       //         $scope.cwd = Vcon.returnCwd();
+       //     
+       //         console.log($scope.user);
+       //     }else{
+       //         console.log(success);
+       //     }
+       // });
 
-        Vcon.isLoggedIn(function (success){
-            if(success)
-            {
-                $scope.user = Vcon.returnUser();
-                $scope.cwd = $scope.user.home;
-
-                Vcon.listFiles(function (files){
-                    $scope.user.storage = files;
-                });
-            
-            }else{
-                console.log(success);
-            }
-        });
-
-       /* Vcon.getStorage($scope.user.home, function (data){
+        /*Vcon.getStorage($scope.user.home, function (data){
             $scope.user.storage = data;
             console.log($scope.user.storage, 'ey');
         });*/
 
-        $scope.listStorage = function()
-        {
-            Vcon.getStorage(function (data){
-                $scope.user.storage = data;
-                console.log(data);
-            });
-
-        };
-        $scope.delete = function(id)
-        {
-            Vcon.deleteFile(id, function(){});
-        };
 
         $scope.download = function(id) {
             $http.get('http://localhost:1338/download/' + id, {
@@ -52,21 +32,6 @@
             });
         };
 
-        $scope.Upload = function (){
-            
-            var fd = new FormData();
-
-            fd.append('apiKey', $scope.user.key);
-
-            $.each($('#uploadedFile')[0].files, function(i, file) {
-                fd.append('file-'+i, file);
-            });
-
-            Vcon.uploadFile(fd, $scope.cwd, function (success) {
-                
-            });
-        };
-
         $scope.updateProfile = function(){
             var newDetails = $scope.user;
         };
@@ -75,25 +40,12 @@
             angular.element('#upload').trigger('click');
         };
 
-        $scope.file_change = function(element) {
-            var fd = new FormData();
-
-            fd.append('apiKey', $scope.user.key);
-            $.each($('#upload')[0].files, function(i, file) {
-                fd.append('file-'+i, file);
-            });
-
-            Vcon.uploadFile(fd, $scope.cwd, function(success) {
-                console.log(success);
-            });
-        }; 
-
         $scope.newFolder = function() {
-
-            Vcon.newFolder($scope.cwd, function(success) {
-                console.log(success);
+            Vcon.newFolder(function(success){
+            
+                console.log('eyey');
             });
-
         };
+
 
 }]);

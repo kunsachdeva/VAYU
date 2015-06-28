@@ -118,7 +118,7 @@ module.exports = function (grunt) {
 
         watch: {
             all: {
-                files: ['public/fonts/**', 'public/img/**', 'public/lib/**', 'public/views/**'],
+                files: ['public/fonts/**', 'public/img/**', 'public/lib/**', 'public/views/**', 'public/templates/**', 'public/modals/**'],
                 options: {
                     livereload: 35729
                 }

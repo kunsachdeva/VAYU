@@ -3,15 +3,18 @@ app.directive('fileList', function () {
         restrict: 'AE',
         scope: {
             fileFilter: '=',
-            cwd: '=',
-            storage: '='
+            cwd: '='
         },
         replace: 'true',
         templateUrl: '/templates/fileList.html',
         controller: ['$scope', 'Vcon', function($scope, Vcon){
-            console.log($scope.files, $scope.storage);
-            $scope.files = $scope.storage.files;
-            $scope.folders = $scope.storage.folders; 
+
+            Vcon.listFiles(function(files){
+
+                $scope.files = files.files;
+                $scope.folders = files.folders;
+                console.log($scope.files, $scope.folders);
+            });
         }],
         link: function(scope, element, attr) {
             scope.$watch("lastUpdated", function(newVal, oldVal){

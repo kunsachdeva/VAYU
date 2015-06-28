@@ -9,7 +9,7 @@ var schema = new Schema({
     },
     size: Number,
     mime: String,
-    path: String,
+    awsId: String,
     sharing: Boolean,
     type: String,
     icon: String,
