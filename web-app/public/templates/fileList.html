@@ -1,7 +1,4 @@
 <div class="main-view col-lg-11 flex">
-    <div ng-click="settings()">
-        eyey
-    </div>
     <input id="upload" type="file" style="display:none;" onchange="angular.element(this).scope().file_change(this)" multiple>
     <div class="file" ng-click="openFolder(folder._id)" ng-repeat=" folder in folders | filter: {name: fileFilter}">
         <div class="icon flex justify-center align-center" >

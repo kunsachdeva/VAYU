@@ -183,9 +183,21 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
             });
         };
         
-        this.updateProfile = function (data) {
-            $http.post(base + 'users', data).success(function (data) { 
-            
+        this.updateProfile = function (fName, lName, email, callback) {
+            $http.put(base + '/user', 
+                    {
+                        name: {
+                            first: fName,
+                            last: lName
+                        },
+                        email: email
+                    },
+                    {
+                        headers: {
+                            'Authorization': 'Basic ' + btoa(user.id + ':' + user.key)
+                        }
+                    }).success(function (data) { 
+                callback(true);
             });
         };
 
@@ -194,7 +206,7 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
             $http.post(base + '/folder/' + cwd ,{name: 'test'}, { 
                 headers: {
                     'Authorization': 'Basic ' + btoa(user.id + ':' + user.key)
-                },
+                }
             })
             .success(function (data) {
                 console.log(data);
@@ -210,7 +222,16 @@ app.service('Vcon', ['$http', '$state', function ($http, $state) {
             .success(function(data){
                 callback(true);
             });
-
         };
 
+        this.changePass = function(oldPass, newPass, callback){
+            $http.put(base + '/pass', {old: oldPass, new: newPass}, {
+                headers: {
+                    'Authorization': 'Basic ' + btoa(user.id + ':' + user.key)
+                },
+            })
+            .success(function(data){
+                callback(true);
+            });
+        };
 }]);

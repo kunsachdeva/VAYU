@@ -262,19 +262,18 @@ exports.login = function(req, res){
 
 exports.updateProfile = function(req, res){
 
-        var userId,
-            profile = {},
-            newProfile;
+    var userId,
+        profile = {},
+        newProfile;
     try
     {
         profile.name = {first: req.body.name.first, last: req.body.name.last};
-        profile.phone = req.body.phone;
-        profile.coutry = req.body.country;
+        profile.email = req.body.email;
         userId = req.body.userId;
     }
     catch(err)
     {
-        return res.status(400).end(err.toString());
+        return res.status(400).end();
     }
 
     userModel.findByIdAndUpdate(userId, {$set:profile}, function(err, user){
@@ -287,17 +286,41 @@ exports.updateProfile = function(req, res){
 
 };
 
-//TODO Change email
-/*exports.changeEmail = function(req, res){
-    
-};
-*/
+//Change password
+exports.changePassword = function(req, res){
+    var oldPass, newPass, userId;
 
-//TODO Change password
-/*exports.changePassword = function(req, res){
+    try
+    {
+        oldPass = req.body.old;
+        newPass = req.body.new;
+        userId = req.body.userId;
+    }
+    catch(err)
+    {
+        return res.status(400).end();
+    }
 
+    userModel.findById(userId, function(err, user){
+        if(err)
+            return res.status(500).json({mongoError: err});
+
+        if(user){
+            if(bcrypt.compareSync(oldPass, user.password)){
+
+                var pass = bcrypt.hashSync(newPass, 8);
+
+                userModel.findByIdAndUpdate(userId, {$set:{password: pass}}, function(err){
+                    if(err)
+                        return res.status(500).json({mongoError: err});
+
+                    res.status(200).end();
+                });
+            }
+        }
+    });
 };
-*/
+
 //Delete profile
 
 exports.deleteUser = function(req, res){

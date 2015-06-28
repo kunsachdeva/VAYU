@@ -1,4 +1,4 @@
-﻿app.controller('userCtrl', ['$scope', 'Vcon', '$state', '$http', function ($scope, Vcon, $state, $http) { 
+﻿app.controller('userCtrl', ['$scope', 'Vcon', '$state', '$http', '$modal', function ($scope, Vcon, $state, $http, $modal) { 
         
         //$scope.user = Vcon.returnUser();
         //$scope.cwd = $scope.user.home;
@@ -44,6 +44,15 @@
             Vcon.newFolder(function(success){
             
                 console.log('eyey');
+            });
+        };
+
+        $scope.settingsModal = function() {
+            var modal = $modal.open({
+                animation: true,
+                templateUrl: '/modals/settings.html',
+                controller: 'settingsModalCtrl',
+                size: 'md'
             });
         };
 

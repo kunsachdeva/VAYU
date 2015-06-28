@@ -69,6 +69,8 @@ api.route('/file/:fileId')
     //Delete file
     .delete(fileCtrl.deleteFile);
 
+api.route('/pass')
+    .put(userCtrl.changePassword);
 
 api.route('/file/:folderId')
 

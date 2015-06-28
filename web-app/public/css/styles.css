@@ -521,35 +521,67 @@ img.profile
     padding-left: 10px;
     background-color: #FFF;
 }
+/*
 .modal-content
 {
     display: inline-block;
 }
-
-.share-modal
+*/
+.va-modal
 {
     background-color: #151d20;
     color: whitesmoke;
-    padding: 20px;
 }
 
-.share-modal .text
+.va-modal .text
 {
     padding-top: 10px;
     padding-bottom: 15px;
 }
 
-.share-modal input
+.va-modal input
 {
     border: none;
     height: 40px;
     width: 300px;
     padding-left: 10px;
-    background-color: #FFF;
+    background-color: whitesmoke;
     color: black;
+    margin-left: 15px;
+    margin-bottom: 15px;
 }
 
-.share-modal button
+.va-modal .title
+{
+    font-size: 22px;
+    padding: 20px;
+    color: whitesmoke; 
+}
+
+.va-modal .sub-title
+{
+    margin-bottom: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.va-modal .modal-footer
+{
+    border-top: 1px rgba(245, 245, 245, 0.34) solid;
+}
+
+.va-modal .modal-footer:not(:last-child)
+{
+    margin-bottom: 20px;
+}
+
+.va-modal .section
+{
+    border-top: 1px rgba(245, 245, 245, 0.34) solid;
+    padding: 20px;
+}
+
+.va-modal button
 {
     height: 40px;
     width: 100px;
@@ -558,18 +590,18 @@ img.profile
     margin-left: 10px;
 }
 
-.share-modal .share
+.va-modal button.submit
 {
     background-color:#e67e22;/* #1f282d;*/
 }
 
-.share-modal .cancel
+.va-modal button.cancel
 {
     background-color: #1f282d;
 }
 
 
-.share-modal .share:hover
+.va-modal .share:hover
 {
     background-color: #2E373C;
 }
