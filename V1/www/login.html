@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=no">
+    <style>
+        @-ms-viewport {
+            width: 100vw;
+            min-zoom: 100%;
+            zoom: 100%;
+        }
+
+        @viewport {
+            width: 100vw;
+            min-zoom: 100% zoom: 100%;
+        }
+
+        @-ms-viewport {
+            user-zoom: fixed;
+            min-zoom: 100%;
+        }
+
+        @viewport {
+            user-zoom: fixed;
+            min-zoom: 100%;
+        }
+    </style>
+    <title></title>
+    <link href="css/font.css" rel="stylesheet">
+    <link href="css/materialize.min.css" rel="stylesheet" />
+    <script src="js/jq.js"></script>
+    <script src="js/materialize.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var x = localStorage.getItem("user"); 
+            if (x != undefined) { window.location.href = "main.html"; }
+            $("input").val("");
+            $("#loginBtn").click(function () {
+                var h = $(window).height();
+                $("label").click(function () { $("#" + $(this).attr("for")).focus(); });
+                $("#loader").css("display", "block");
+                $("#loginForm").css("display", "none");
+                var e = $.trim($("#email").val());
+                var p = $.trim($("#pass").val());
+                if (e != null && p != null && e != "" && p != "" && !($("#email").hasClass("invalid"))) {
+                    $.ajax({
+                        url: "http://vayu-api.herokuapp.com/user",
+                        method: "GET",
+                        contentType: "application/json",
+                        headers: { "Authorization": "Basic " + btoa(e + ":" + p) }
+                    }).done(function (data1) {
+                        user = data1;
+                        localStorage.setItem("user", JSON.stringify(user));
+                        window.location.href = "index.html";
+                    }).fail(function () {
+                        $("#loader").css("display", "none");
+                        $("#loginForm").css("display", "block");
+                        Materialize.toast('Login failed!', 4000);
+                    });
+                }
+                else {
+                    $("#loader").css("display", "none");
+                    $("#loginForm").css("display", "block"); Materialize.toast('Invalid credentials!', 4000);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+        <div style="text-align:center;margin-top:60px;margin-bottom:50px;"> 
+    <img src="img/logo1.png" id="logo" style="width:90%;max-width:400px" /></div>
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div id="loader" style="text-align:center;margin-top:81px;display:none">
+                        <div class="preloader-wrapper big active">
+                            <div class="spinner-layer spinner-blue">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                            <div class="spinner-layer spinner-red">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+
+                            <div class="spinner-layer spinner-yellow">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+
+                            <div class="spinner-layer spinner-green">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="loginForm">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix"><img src="img/ic_action_person.png"></i>
+                            <input id="email" type="email">
+                            <label for="email">Email</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix"><img src="img/ic_action_secure.png"></i>
+                            <input id="pass" type="password">
+                            <label for="pass">Password</label>
+                        </div>
+                        <div class="input-field col s12 centered" style="text-align:center">
+                            <a id="loginBtn" class="waves-effect waves-light btn" style="background-color:orangered">Log In</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="input-field col s12 centered" style="text-align:center;width:80%;margin-left:10%;margin-right:10%;margin-top:30px">
+            <a id="newUserBtn" href="signup.html" class="waves-effect waves-red btn-flat">New User? Join in here!</a>
+        </div>
+</body>
+</html>

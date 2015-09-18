@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=no">
+    <style>@-ms-viewport{width:100vw;min-zoom:100%;zoom:100%}@viewport{width:100vw;min-zoom:100%;zoom: 100%}@-ms-viewport{user-zoom:fixed;min-zoom:100%}@viewport{user-zoom:fixed;min-zoom:100%}</style>
+    <script src="intelxdk.js"></script>
+    <script src="cordova.js"></script>
+    <script src="xhr.js"></script>
+    <script src="js/init-app.js"></script>
+    <script src="js/init-dev.js"></script>
+    <link href="css/materialize.min.css" rel="stylesheet" />
+    <script src="js/jq.js"></script>
+    <script src="js/materialize.min.js"></script>
+    <style>.downd,.delete,.deletef,.openFolder{margin-right:12px;}.downd,.delete,.deletef,.infoFi,.infoFo,.openFolder{height:25px;vertical-align:middle;}.folder .title{position:relative;top:10px}.dropdown-content{height:30px;padding-top:3px;}
+    span.dropdown-button.btn{box-shadow:none}.dropdown-button{width:100px;padding:0;height:25px}.amber{padding-top:5px;padding-left:3px;}.circle{padding-top:5px;}#infoFiBox,#infoFoBox{padding:20px 10px;}</style>
+    <script>
+        $(document).ready(function () {
+            
+            var colors = ["red", "indigo", "teal", "yellow", "pink", "purple", "blue", "cyan", "green", "lime"];
+            var user = JSON.parse(localStorage.getItem("user"));
+            $("#btns").css("display", "none");
+            var fileData = "";
+            var currFolder = user.home;
+            var parentFolder = user.home;
+            //$.ajax({
+            //    url: "http://vayu-api.herokuapp.com/api/share/" + "55f01eba71d905030066d1e1",
+            //    method: "POST",
+            //    contentType: "application/json",
+            //    headers: { "Authorization": "Basic " + btoa(user._id + ":" + user.apiKey) }
+            //}).done(function (data12) {
+            //    alert(data12);
+            //}).fail(function (d) {  });
+            function refresh() {
+                $("#loader").show(0);
+                $.ajax({
+                    url: "http://vayu-api.herokuapp.com/api/getStorage/",
+                    method: "GET",
+                    contentType: "application/json",
+                    headers: { "Authorization": "Basic " + btoa(user._id + ":" + user.apiKey) }
+                }).done(function (su) { $("#storageUsed").text("Storage Used: " + Math.round(JSON.stringify(su) / 1048576) + "MB"); });
+                $.ajax({
+                    url: "http://vayu-api.herokuapp.com/api/file/" + currFolder,
+                    method: "GET",
+                    contentType: "application/json",
+                    headers: { "Authorization": "Basic " + btoa(user._id + ":" + user.apiKey) }
+                }).done(function (data2) {
+                    fileData = localStorage.setItem("fileData", JSON.stringify(data2));
+                    if (data2.files.length > 0) {
+                        $("#filesCollection").show(0);
+                        $("#filesCollection").html("");
+                        $.each(data2.files, function (index, value) {
+                            {
+                                var dot = "";
+                                if (this.name.length > 20) dot = "...";
+                                var ico = "img/ic_grain_white_24dp.png";
+                                if (this.type.indexOf("text") > -1) ico = "img/ic_action_chat.png";
+                                else if (this.type.indexOf("image") > -1) ico = "img/ic_action_picture.png";
+                                else if (this.type.indexOf("vid") > -1) ico = "img/ic_action_video.png";
+                                else if (this.type.indexOf("image") > -1) ico = "img/ic_action_play.png";
+                                $("#filesCollection").html($("#filesCollection").html() +
+                                    "<li name='" + (this.name) + this.extension + "' id='" + this._id + "' class='collection-item file avatar waves-effect' style='width:100%;'><i class='material-icons circle " + colors[Math.floor(Math.random() * 9) + 0] + "'><img src='" +ico + "'></i><span class='title'>" +
+                                    this.name.substring(0, 20) +dot + this.extension + "</span><p>" + this.type + "   " + (Math.round(this.size / 1024)) + "KB" + "</p><span class='secondary-content'><span class='dropdown-button btn' href='#' data-activates='dropdown" + this._id + "'><img src='img/ic_action_overflow.png'/></span><ul id='dropdown" + this._id + "' class='dropdown-content filedrop' style='left:15px!important'><li><img class='downd' name='" + this._id + "|" + this.name + this.extension + "' src='img/ic_action_download.png'/><img class='delete' name='" + this._id + "' src='img/ic_action_discard.png'/><img class='infoFi'  name='" + this.name + "~" + this.extension + "~" + this.mime + "~" + this.size + "' src='img/ic_action_about.png'/></li></ul></span></li>"
+                                    );
+                                $('.dropdown-button').dropdown();
+                            }
+                        });
+                    }
+                    else $("#filesCollection").hide(0);
+                    if (data2.folders.length > 0) {
+                        var folder_ico = "img/ic_action_collection.png";
+                        $("#foldersCollection").show(0);
+                        $("#foldersCollection").html("");
+                        $.each(data2.folders, function (index, value) {
+                            {
+                                var dot = "";
+                                if (this.name.length > 20) dot = "...";
+                                $("#foldersCollection").html($("#foldersCollection").html() +
+                                    "<li class='collection-item avatar folder waves-effect' style='width:100%' name='" + this._id + "'><i class='material-icons circle amber'><img src='" + folder_ico + "'></i><span class='title'>" + this.name.substring(0, 20) + dot + "</span>" +
+                                    "<span class='secondary-content'><span class='dropdown-button btn' href='#' data-activates='dropdown" + this._id + "'><img src='img/ic_action_overflow.png'/></span><ul id='dropdown" + this._id + "' class='dropdown-content'><li><img class='openFolder' name='"+this._id+"' src='img/ic_action_forward.png'/><img class='deletef' name='" + this._id + "' src='img/ic_action_discard.png'/><img class='infoFo'  name='" + this.name + "' src='img/ic_action_about.png'/></li></ul></span></li>"
+                                    );
+                                $('.dropdown-button').dropdown();
+                            }
+                        });
+                    }
+                    else $("#foldersCollection").hide(0);
+                    $("#loader").hide(0);
+                }).fail(function () {
+                    $("#filesCollection").hide(0); $("#foldersCollection").hide(0);
+                    Materialize.toast("Please check your network");
+                });
+            }
+            refresh();
+            $(".button-collapse").sideNav();
+            $("#refresh").click(function () { $("#loader").show(0); refresh(); });
+            $(document).on('click', '.infoFi', function () {
+                var d = $(this).attr("name").split("~");
+                $("#FiName").text("Name: " + d[0]);
+                $("#FiExt").text("Extension: " + d[1]);
+                $("#FiMime").text("Type:" + d[2]);
+                $("#FiSize").text("Size: " + d[3]+" Bytes");
+                $("#infoFiBox").openModal();
+            });
+            $(document).on('click', '.infoFo', function () {
+                $("#FoName").text("Name: " + $(this).attr("name"));
+                $("#infoFoBox").openModal();
+            });
+            $(document).on('click', '.infoFo', function () { });
+            $(document).on('click', '.downd', function () {
+                var n = ($(this).attr("name")).split("|");
+                var name1 = n[1];
+                var id1 = n[0];
+                var fileTransfer = new FileTransfer();
+                var uri = encodeURI("http://vayu-api.herokuapp.com/api/download/" + id1);
+                Materialize.toast("Downloading " + name1,3000);
+                fileTransfer.download(
+                    uri,
+                    "/storage/emulated/0/VAYU/"+name1,
+                    function (entry) {
+                        Materialize.toast("Downloaded to Phone",4000);//
+                    },
+                    function (error) {
+                        Materialize.toast("Download failed!",3000);
+                    },
+                    false,
+                    {
+                        headers: {
+                            "Authorization": "Basic " + btoa(user._id + ":" + user.apiKey)
+                        }
+                    }
+                );
+            });
+            $(document).on('click', '.openFolder', function () {
+                parentFolder = currFolder;
+                currFolder = $(this).attr("name");
+                refresh();
+            });
+            $(document).on('click', '.folder,.secondary-content', function () {
+                if ($(this).attr("class") == "secondary-content") return false;
+                parentFolder = currFolder;
+                currFolder = $(this).attr("name");
+                refresh();
+            });
+            $("#addFolder").click(function () {$('#addFolderModal').openModal();});
+            $("#createNewFolder").click(function () {
+                var n = $("#newFolderName").val();
+                var f = { name: n, userId: user._id };
+                $.ajax({
+                    url: "http://vayu-api.herokuapp.com/api/folder/" + currFolder,
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(f),
+                    headers: { "Authorization": "Basic " + btoa(user._id + ":" + user.apiKey) }
+                }).done(function (data12) {
+                    $('#addFolderModal').closeModal(); Materialize.toast("Folder created", 2000); refresh();
+                }).fail(function () { $('#addFolderModal').closeModal(); Materialize.toast("Folder not created :(", 2000); });
+            });
+            $(document).on('click', '.deletef', function () {
+                $("#loader").show(0);
+                var d = $(this).attr('name');
+                $.ajax({
+                    url: 'http://vayu-api.herokuapp.com/api/folder/' + d,
+                    type: 'DELETE',
+                    headers: { "Authorization": "Basic " + btoa(user._id + ":" + user.apiKey) },
+                    success: function () {
+                        refresh();
+                    }
+                });
+            });
+            $(document).on('click', '.delete', function () {
+                $("#loader").show(0);
+                var d = $(this).attr('name');
+                $.ajax({
+                    url: 'http://vayu-api.herokuapp.com/api/file/' + d,
+                    type: 'DELETE',
+                    headers: { "Authorization": "Basic " + btoa(user._id + ":" + user.apiKey) },
+                    success: function () {
+                        refresh();
+                    }
+                });
+            });
+            $("#uploadBtn").click(function () { $('#addFileModal').openModal(); });
+            $("#uploadFile").click(function () {
+                $("#uploadLoader").show();
+                var form = document.getElementById('fileform');
+                var formData = new FormData(form);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://vayu-api.herokuapp.com/api/file/' + currFolder, true);
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(user._id + ":" + user.apiKey));
+                $("#uploadedProgress").css("display", "block");
+                xhr.upload.onprogress = function (e) { $(".determinate").css("width",100*e.loaded / e.total+"%"); };
+                xhr.onreadystatechange = function () { if (xhr.readyState == 4 && xhr.status == 200) { $("#uploadLoader").hide(); refresh(); Materialize.toast("File" + " added", 4000); }; };
+                xhr.send(formData);
+                Materialize.toast("Uploading....", 4000);
+                $('#addFileModal').closeModal();
+            });
+            $("#backBtn").click(function () {
+                currFolder = parentFolder;
+                parentFolder = user.home;
+                refresh();
+            });
+            $("#logoutBtn").click(function () { localStorage.clear(); window.location.href = 'login.html'; });
+            $(".fixed-action-btn").mouseleave(function () { $("#btns").css("display", "none") });
+            $(".fixed-action-btn").mouseenter(function () { $("#btns").css("display", "block") });
+        });
+    </script>
+    <style>
+        nav .nav-wrapper i {
+            line-height: 50px !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav style="height:50px">
+            <div class="nav-wrapper" style="background:orange;">
+                <a class="brand-logo"><img src="img/logo1.png" id="logo" style="height:30px;margin-top:10px" /></a>
+                <!--<a href="#" data-activates="mobile-demo" class="button-collapse" style="position:fixed;left:-13px"><i class="material-icons">menu</i></a>-->
+                <ul class="right" style="width:50px;">
+                    <li><span id="backBtn"><img src="img/ic_action_back.png" style="margin-top:8px"/></span></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div id="loader" style="margin-top:0px" class="progress">
+            <div class="indeterminate"></div>
+        </div>
+        <div id="uploadLoader" class="progress" style="display:none;overflow:visible;top:-20px">
+            <div class="determinate" style="width: 0%;max-width:98%"></div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <ul class="collection" id="foldersCollection"></ul>
+                <ul class="collection" id="filesCollection"></ul>
+            </div>
+        </div>
+        <div class="fixed-action-btn" style="bottom:15px;right:15px;">
+            <a class="btn-floating btn-large orange" style="text-align:center">
+                <img src="img/ic_menu_white_48dp.png" height="30" style="vertical-align:middle"/>
+            </a>
+            <ul id="btns">
+                <li style="text-align:center" id="uploadBtn"><a class="btn-floating red"><img src="img/ic_action_upload.png" style="vertical-align:middle"/></a></li>
+                <li style="text-align:center" id="addFolder"><a class="btn-floating blue"><img src="img/ic_action_add_to_queue.png" style="height:30px;vertical-align:middle"/><i class="material-icons">queue</i></a></li>
+                <li style="text-align:center" id="refresh"><a class="btn-floating green"><img src="img/ic_action_refresh.png" style="height:25px;vertical-align:middle"/></a></li>
+                <li style="text-align:center" id="logoutBtn"><a class="btn-floating blue-grey"><img src="img/ic_action_previous_item.png" style="vertical-align:middle"/></a></li>
+            </ul>
+        </div>
+    </main>
+    <footer class="page-footer">
+        <div class="footer-copyright">
+            <div class="container">
+                <span id="storageUsed"></span>
+            </div>
+        </div>
+    </footer>
+    <style>
+        body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+    </style>
+    <div id="addFolderModal" class="modal bottom-sheet">
+        <div class="modal-content">
+            <input type="text" id="newFolderName" />
+            <label for="newFolderName">Name New Folder</label>
+        </div>
+        <div class="modal-footer">
+            <a id="createNewFolder" class="waves-effect waves-green btn-flat">CREATE</a>
+        </div>
+    </div>
+    <div id="addFileModal" class="modal bottom-sheet">
+
+        <div class="modal-content">
+            <div class="progress" id="uploadedProgress" style="display:none;">
+                <div class="determinate" style="width:0%;"></div>
+            </div>
+            <div class="file-field input-field">
+                <input class="file-path" type="text" />
+                <div class="btn" style="background-color:orangered">
+                    <span>FILE</span>
+                    <form id="fileform">
+                        <input type="file" id="newFile" name="files[]" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a id="uploadFile" class="waves-effect waves-green btn-flat">UPLOAD</a>
+        </div>
+    </div>
+    <div id="infoFiBox" class="modal">
+        <h5>File</h5>
+        <div id="FiName">Size: </div>
+        <div id="FiExt">Extension: </div>
+        <div id="FiMime">Type: </div>
+        <div id="FiSize">Size: </div>
+    </div>
+    <div id="infoFoBox" class="modal">
+        <h5>Folder</h5>
+        <div id="FoName"></div>
+    </div>
+</body>
+</html>
