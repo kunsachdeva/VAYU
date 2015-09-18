@@ -1,3 +1,0 @@
-#!/usr/bin/zsh
-
-cd ~/vayu/rest-api; AWS_ACCESS_KEY_ID=AKIAJT6FV5SATRLTIHAA AWS_SECRET_ACCESS_KEY=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 NODE_ENV=dev node server.js

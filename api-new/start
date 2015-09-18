@@ -1,6 +1,0 @@
-#!/bin/bash
-clear
-while read line; do export "$line";
-done < .env
-
-node server.js

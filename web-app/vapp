@@ -1,3 +1,0 @@
-#!/usr/bin/zsh
-
-clear; NODE_ENV=dev node server.js
